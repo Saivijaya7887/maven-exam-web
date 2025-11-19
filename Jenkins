@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JAVA_HOME'
+        maven 'MAVEN_HOME'
+    }
+
+    stages {
+
+        stage('git repo & clean') {
+            steps {
+                // Remove old folder if exists
+                bat "rmdir /s /q maven-exam-web || exit 0"
+
+                // Clone your GitHub repo
+                bat "git clone https://github.com/Saivijaya7887/maven-exam-web.git"
+
+                // Run mvn clean
+                bat "mvn clean -f maven-exam-web/pom.xml"
+            }
+        }
+
+        stage('install') {
+            steps {
+                bat "mvn install -f maven-exam-web/pom.xml"
+            }
+        }
+
+        stage('test') {
+            steps {
+                bat "mvn test -f maven-exam-web/pom.xml"
+            }
+        }
+
+        stage('package') {
+            steps {
+                bat "mvn package -f maven-exam-web/pom.xml"
+            }
+        }
+    }
+}
